@@ -19,6 +19,7 @@ class Order(SQLModel, table=True):
     stripe_checkout_session_id: str | None = Field(
         default=None, index=True, max_length=255
     )
+    payment_email_sent_at: datetime | None = Field(default=None)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(UTC),
         index=True,

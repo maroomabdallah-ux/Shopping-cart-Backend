@@ -7,6 +7,7 @@ from sqlmodel import Session, select
 from app.core.config import get_settings
 from app.db.session import get_session
 from app.features.orders.model import Order, OrderItem
+from app.features.payments.email import send_payment_confirmation
 from app.features.users.dependencies import get_current_user
 from app.features.users.model import User
 
@@ -23,6 +24,13 @@ def _stripe() -> None:
 def _minor_units(amount: float) -> int:
     # JOD has three decimal minor units.
     return int(Decimal(str(amount)) * 1000)
+
+
+def _paid_amount(checkout: object, fallback: float) -> float:
+    amount_total = getattr(checkout, "amount_total", None)
+    if amount_total is None and isinstance(checkout, dict):
+        amount_total = checkout.get("amount_total")
+    return float(Decimal(amount_total) / 1000) if amount_total is not None else fallback
 
 
 @router.post("/checkout/{order_id}")
@@ -110,6 +118,11 @@ def confirm_checkout_session(
         order.payment_status = "paid"
         session.add(order)
         session.commit()
+        send_payment_confirmation(
+            session,
+            order,
+            _paid_amount(checkout, order.total),
+        )
     return {"payment_status": order.payment_status}
 
 
@@ -140,4 +153,9 @@ async def stripe_webhook(
             order.payment_status = "paid"
             session.add(order)
             session.commit()
+            send_payment_confirmation(
+                session,
+                order,
+                _paid_amount(checkout, order.total),
+            )
     return {"received": True}
