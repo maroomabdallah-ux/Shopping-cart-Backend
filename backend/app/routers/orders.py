@@ -2,8 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
 from app.db.session import get_session
+from app.dependencies import get_current_user
 from app.models.order import Order, OrderItem
 from app.models.product import Product
+from app.models.user import User, UserRole
 from app.schemas.order import (
     OrderCreate,
     OrderItemRead,
@@ -16,6 +18,7 @@ router = APIRouter(prefix="/orders", tags=["orders"])
 @router.post("", response_model=OrderRead, status_code=status.HTTP_201_CREATED)
 def create_order(
     payload: OrderCreate,
+    current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session),
 ) -> OrderRead:
     product_ids = {item.product_id for item in payload.items}
@@ -38,6 +41,7 @@ def create_order(
     )
     delivery = 0 if subtotal >= 50 else 5
     order = Order(
+        user_id=current_user.id,
         customer_name=payload.customer_name,
         phone=payload.phone,
         address=payload.address,
@@ -63,23 +67,49 @@ def create_order(
 
     session.commit()
     session.refresh(order)
-    return _build_order_response(order, order_items)
+    return build_order_response(order, order_items)
+
+
+@router.get("", response_model=list[OrderRead])
+def list_my_orders(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+) -> list[OrderRead]:
+    orders = session.exec(
+        select(Order)
+        .where(Order.user_id == current_user.id)
+        .order_by(Order.created_at.desc())
+    ).all()
+    return [
+        build_order_response(
+            order,
+            list(
+                session.exec(
+                    select(OrderItem).where(OrderItem.order_id == order.id)
+                ).all()
+            ),
+        )
+        for order in orders
+    ]
 
 
 @router.get("/{order_id}", response_model=OrderRead)
 def get_order(
     order_id: int,
+    current_user: User = Depends(get_current_user),
     session: Session = Depends(get_session),
 ) -> OrderRead:
     order = session.get(Order, order_id)
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found")
+    if current_user.role != UserRole.ADMIN and order.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Access denied")
 
     items = session.exec(select(OrderItem).where(OrderItem.order_id == order_id)).all()
-    return _build_order_response(order, items)
+    return build_order_response(order, list(items))
 
 
-def _build_order_response(
+def build_order_response(
     order: Order,
     items: list[OrderItem],
 ) -> OrderRead:

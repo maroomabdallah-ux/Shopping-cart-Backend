@@ -1,7 +1,10 @@
 from sqlmodel import Session, select
 
+from app.core.config import get_settings
+from app.core.security import hash_password
 from app.db.session import engine
 from app.models.product import Product
+from app.models.user import User, UserRole
 
 PRODUCTS = [
     {
@@ -121,4 +124,21 @@ def seed_products() -> None:
         if session.exec(select(Product.id).limit(1)).first() is not None:
             return
         session.add_all(Product(**data) for data in PRODUCTS)
+        session.commit()
+
+
+def seed_admin() -> None:
+    settings = get_settings()
+    email = settings.admin_email.strip().lower()
+    with Session(engine) as session:
+        if session.exec(select(User).where(User.email == email)).first():
+            return
+        session.add(
+            User(
+                name="Administrator",
+                email=email,
+                password_hash=hash_password(settings.admin_password),
+                role=UserRole.ADMIN,
+            )
+        )
         session.commit()

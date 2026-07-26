@@ -10,6 +10,13 @@ class Settings(BaseSettings):
         "postgresql+psycopg://shopping_cart:shopping_cart@localhost:5433/shopping_cart"
     )
     frontend_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    secret_key: str = "change-this-secret-key-in-production"
+    access_token_expire_minutes: int = 60
+    admin_email: str = "admin@shop.local"
+    admin_password: str = "Admin123!"
+    stripe_secret_key: str = ""
+    stripe_webhook_secret: str = ""
+    frontend_url: str = "http://localhost:5173"
 
     model_config = SettingsConfigDict(
         env_file=".env",

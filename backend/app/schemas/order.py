@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import StrEnum
 
 from pydantic import Field
 from sqlmodel import SQLModel
@@ -16,6 +17,19 @@ class OrderCreate(SQLModel):
     items: list[OrderItemCreate] = Field(min_length=1)
 
 
+class OrderStatus(StrEnum):
+    PENDING = "pending"
+    CONFIRMED = "confirmed"
+    PROCESSING = "processing"
+    SHIPPED = "shipped"
+    DELIVERED = "delivered"
+    CANCELLED = "cancelled"
+
+
+class OrderStatusUpdate(SQLModel):
+    status: OrderStatus
+
+
 class OrderItemRead(SQLModel):
     product_id: int
     title: str
@@ -25,6 +39,7 @@ class OrderItemRead(SQLModel):
 
 class OrderRead(SQLModel):
     id: int
+    user_id: int | None
     customer_name: str
     phone: str
     address: str
@@ -32,5 +47,6 @@ class OrderRead(SQLModel):
     delivery: float
     total: float
     status: str
+    payment_status: str
     created_at: datetime
     items: list[OrderItemRead]
