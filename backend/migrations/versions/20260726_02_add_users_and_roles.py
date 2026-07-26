@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 from app.core.config import get_settings
-from app.core.security import hash_password
+from app.features.users.security import hash_password
 
 revision: str = "20260726_02"
 down_revision: str | Sequence[str] | None = "20260723_01"

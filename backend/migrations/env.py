@@ -5,7 +5,9 @@ from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
 from app.core.config import get_settings
-from app.models import Order, OrderItem, Product  # noqa: F401
+from app.features.orders.model import Order, OrderItem  # noqa: F401
+from app.features.products.model import Product  # noqa: F401
+from app.features.users.model import User  # noqa: F401
 
 config = context.config
 config.set_main_option("sqlalchemy.url", get_settings().database_url)

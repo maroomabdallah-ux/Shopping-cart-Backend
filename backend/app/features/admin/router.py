@@ -5,19 +5,19 @@ from sqlalchemy import func, or_
 from sqlmodel import Session, select
 
 from app.db.session import get_session
-from app.dependencies import require_admin
-from app.models.order import Order, OrderItem
-from app.models.product import Product
-from app.models.user import User
-from app.routers.orders import build_order_response
-from app.schemas.order import OrderRead, OrderStatusUpdate
-from app.schemas.product import (
+from app.features.orders.model import Order, OrderItem
+from app.features.orders.router import build_order_response
+from app.features.orders.schemas import OrderRead, OrderStatusUpdate
+from app.features.products.model import Product
+from app.features.products.schemas import (
     ProductCreate,
     ProductPage,
     ProductRead,
     ProductUpdate,
 )
-from app.schemas.user import UserRead
+from app.features.users.dependencies import require_admin
+from app.features.users.model import User
+from app.features.users.schemas import UserRead
 
 router = APIRouter(
     prefix="/admin",

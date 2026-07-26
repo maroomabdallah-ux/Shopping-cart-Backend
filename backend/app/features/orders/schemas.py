@@ -1,3 +1,5 @@
+"""Order request and response schemas."""
+
 from datetime import datetime
 from enum import StrEnum
 

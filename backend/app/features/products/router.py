@@ -5,8 +5,8 @@ from sqlalchemy import func, or_
 from sqlmodel import Session, select
 
 from app.db.session import get_session
-from app.models.product import Product
-from app.schemas.product import ProductPage, ProductRead
+from app.features.products.model import Product
+from app.features.products.schemas import ProductPage, ProductRead
 
 router = APIRouter(prefix="/products", tags=["products"])
 

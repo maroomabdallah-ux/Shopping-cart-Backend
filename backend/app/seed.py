@@ -1,10 +1,10 @@
 from sqlmodel import Session, select
 
 from app.core.config import get_settings
-from app.core.security import hash_password
 from app.db.session import engine
-from app.models.product import Product
-from app.models.user import User, UserRole
+from app.features.products.model import Product
+from app.features.users.model import User, UserRole
+from app.features.users.security import hash_password
 
 PRODUCTS = [
     {

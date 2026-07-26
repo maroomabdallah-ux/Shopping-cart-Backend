@@ -6,9 +6,9 @@ from sqlmodel import Session, select
 
 from app.core.config import get_settings
 from app.db.session import get_session
-from app.dependencies import get_current_user
-from app.models.order import Order, OrderItem
-from app.models.user import User
+from app.features.orders.model import Order, OrderItem
+from app.features.users.dependencies import get_current_user
+from app.features.users.model import User
 
 router = APIRouter(prefix="/payments", tags=["payments"])
 

@@ -1,3 +1,5 @@
+"""Product persistence model."""
+
 from sqlmodel import Field, SQLModel
 
 

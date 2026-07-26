@@ -1,3 +1,5 @@
+"""Product request and response schemas."""
+
 from pydantic import Field
 from sqlmodel import SQLModel
 

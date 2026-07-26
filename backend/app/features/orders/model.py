@@ -1,3 +1,5 @@
+"""Order and order-item persistence models."""
+
 from datetime import UTC, datetime
 
 from sqlmodel import Field, SQLModel

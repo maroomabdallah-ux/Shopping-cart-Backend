@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import Field, field_validator
 from sqlmodel import SQLModel
 
-from app.models.user import UserRole
+from app.features.users.model import UserRole
 
 
 class UserRegister(SQLModel):

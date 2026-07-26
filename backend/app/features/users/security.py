@@ -1,3 +1,5 @@
+"""Password hashing and JWT helpers for users."""
+
 from datetime import UTC, datetime, timedelta
 
 import jwt

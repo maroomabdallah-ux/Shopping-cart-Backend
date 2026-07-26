@@ -1,3 +1,5 @@
+"""User persistence model and roles."""
+
 from datetime import UTC, datetime
 from enum import StrEnum
 

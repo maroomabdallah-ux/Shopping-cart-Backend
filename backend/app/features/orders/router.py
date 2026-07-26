@@ -2,15 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
 from app.db.session import get_session
-from app.dependencies import get_current_user
-from app.models.order import Order, OrderItem
-from app.models.product import Product
-from app.models.user import User, UserRole
-from app.schemas.order import (
+from app.features.orders.model import Order, OrderItem
+from app.features.orders.schemas import (
     OrderCreate,
     OrderItemRead,
     OrderRead,
 )
+from app.features.products.model import Product
+from app.features.users.dependencies import get_current_user
+from app.features.users.model import User, UserRole
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
