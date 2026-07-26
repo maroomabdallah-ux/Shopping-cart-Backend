@@ -2,6 +2,7 @@
 
 FastAPI backend for the React shopping cart application.
 
+
 ## Architecture
 
 The application uses a feature-first structure. Each business feature keeps its
@@ -113,7 +114,8 @@ deploying.
 Start the API:
 
 ```bash
-fastapi dev app/main.py
+cd /Users/apple/shoppingCartBackend/backend
+PYTHONPATH=.venv/lib/python3.14/site-packages python3 -m fastapi dev app/main.py
 ```
 
 The API will be available at `http://127.0.0.1:8000`.
